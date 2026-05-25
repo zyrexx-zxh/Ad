@@ -144,7 +144,7 @@ async def admin_panel(client, message):
     args = message.text.split()
     if len(args) == 1:
         active, expired = 0, 0
-        text = "<b><tg-emoji emoji-id=\"5368324170671202286\">💠</tg-emoji> ARCVIUM ADMINISTRATION</b>\n\n<b>Network Data:</b>\n"
+        text = "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_1\">💠</tg-emoji> ARCVIUM ADMINISTRATION</b>\n\n<b>Network Data:</b>\n"
         for uid, exp in subs_db.items():
             if uid == MASTER_ADMIN: continue
             if time.time() < exp:
@@ -176,10 +176,10 @@ async def start_command(client, message):
     user_id = message.from_user.id
     user_states[user_id] = None 
     if user_id not in subs_db or time.time() > subs_db[user_id]:
-        text = "<b><tg-emoji emoji-id=\"5427009714297512785\">🔴</tg-emoji> ACCESS RESTRICTED</b>\n\nActive subscription is required for network access.\nSelect a tier below to proceed."
+        text = "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_3\">🔴</tg-emoji> ACCESS RESTRICTED</b>\n\nActive subscription is required for network access.\nSelect a tier below to proceed."
         return await message.reply_text(text, reply_markup=get_paywall_menu(), parse_mode=ParseMode.HTML)
     
-    text = "<b><tg-emoji emoji-id=\"5368324170671202286\">💠</tg-emoji> ARCVIUM NETWORK</b>\n\n<i>Automate your marketing, scrape potential clients, and broadcast your campaigns safely across Telegram.</i>\n\n▪ Premium Delivery\n▪ Sequential Bridging\n▪ Spintax Engine\n▪ DM Scraper Module"
+    text = "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_1\">💠</tg-emoji> ARCVIUM NETWORK</b>\n\n<i>Automate your marketing, scrape potential clients, and broadcast your campaigns safely across Telegram.</i>\n\n▪ Premium Delivery\n▪ Sequential Bridging\n▪ Spintax Engine\n▪ DM Scraper Module"
     try: await message.reply_photo(photo=IMAGE_URL, caption=text, reply_markup=get_main_menu(), parse_mode=ParseMode.HTML)
     except: await message.reply_text(text, reply_markup=get_main_menu(), parse_mode=ParseMode.HTML)
 
@@ -187,7 +187,7 @@ async def start_command(client, message):
 async def payment_gateway(client, query):
     data, user_id = query.data, query.from_user.id
     if data == "cancel_pay": 
-        text = "<b><tg-emoji emoji-id=\"5427009714297512785\">🔴</tg-emoji> ACCESS RESTRICTED</b>\n\nSelect a tier below to proceed."
+        text = "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_3\">🔴</tg-emoji> ACCESS RESTRICTED</b>\n\nSelect a tier below to proceed."
         return await query.edit_message_text(text, reply_markup=get_paywall_menu(), parse_mode=ParseMode.HTML)
     elif data.startswith("buy_"):
         days = data.split("_")[1]
@@ -208,12 +208,12 @@ async def admin_approval(client, query):
         subs_db[int(target_uid)] = time.time() + (int(days) * 86400)
         save_db()
         await query.edit_message_text(f"{query.message.text}\n\n[ Status: APPROVED ]", parse_mode=ParseMode.HTML)
-        try: await app.send_message(int(target_uid), "<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Verification Successful</b>\nNetwork access granted. Send /start to initialize.", parse_mode=ParseMode.HTML)
+        try: await app.send_message(int(target_uid), "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Verification Successful</b>\nNetwork access granted. Send /start to initialize.", parse_mode=ParseMode.HTML)
         except: pass
     elif data.startswith("reject_"):
         _, target_uid = data.split("_")
         await query.edit_message_text(f"{query.message.text}\n\n[ Status: REJECTED ]", parse_mode=ParseMode.HTML)
-        try: await app.send_message(int(target_uid), "<b><tg-emoji emoji-id=\"5427009714297512785\">🔴</tg-emoji> Verification Failed</b>\nTransaction rejected. Contact support for assistance.", parse_mode=ParseMode.HTML)
+        try: await app.send_message(int(target_uid), "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_3\">🔴</tg-emoji> Verification Failed</b>\nTransaction rejected. Contact support for assistance.", parse_mode=ParseMode.HTML)
         except: pass
 
 @app.on_callback_query(filters.regex("^(menu_start|menu_dashboard|target_menu|tg_smart|tg_manual|switch_mode)$"))
@@ -224,7 +224,7 @@ async def navigate_menus(client, query):
     ud, mem = get_udata(user_id)
     
     if query.data == "menu_start":
-        text = "<b><tg-emoji emoji-id=\"5368324170671202286\">💠</tg-emoji> ARCVIUM NETWORK</b>\n\n<i>Automate your marketing, scrape potential clients, and broadcast your campaigns safely across Telegram.</i>\n\n▪ Premium Delivery\n▪ Sequential Bridging\n▪ Spintax Engine\n▪ DM Scraper Module"
+        text = "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_1\">💠</tg-emoji> ARCVIUM NETWORK</b>\n\n<i>Automate your marketing, scrape potential clients, and broadcast your campaigns safely across Telegram.</i>\n\n▪ Premium Delivery\n▪ Sequential Bridging\n▪ Spintax Engine\n▪ DM Scraper Module"
         try: await query.edit_message_caption(caption=text, reply_markup=get_main_menu(), parse_mode=ParseMode.HTML)
         except: await query.edit_message_text(text=text, reply_markup=get_main_menu(), parse_mode=ParseMode.HTML)
     
@@ -235,14 +235,14 @@ async def navigate_menus(client, query):
         await navigate_menus(client, type("obj", (object,), {"data": "menu_dashboard", "from_user": query.from_user, "edit_message_caption": query.edit_message_caption, "edit_message_text": query.edit_message_text})())
 
     elif query.data == "menu_dashboard":
-        status_icon = "<tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> ACTIVE" if ud['status'] == "Running" else "<tg-emoji emoji-id=\"5427009714297512785\">🔴</tg-emoji> PAUSED"
-        text = f"<b><tg-emoji emoji-id=\"5368324170671202286\">💠</tg-emoji> ARCVIUM DASHBOARD</b>\n\n<b>Overview:</b>\n▫️ Active Accounts: {len(ud['accounts'])}\n▫️ Safety Delay: {ud['interval']}s\n▫️ Target Audience: {len(ud['targets'])}\n▫️ Broadcast Status: {status_icon}\n\n<i>Select a module below to configure your campaign:</i>"
+        status_icon = "<tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> ACTIVE" if ud['status'] == "Running" else "<tg-emoji emoji-id=\"YOUR_EMOJI_ID_3\">🔴</tg-emoji> PAUSED"
+        text = f"<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_1\">💠</tg-emoji> ARCVIUM DASHBOARD</b>\n\n<b>Overview:</b>\n▫️ Active Accounts: {len(ud['accounts'])}\n▫️ Safety Delay: {ud['interval']}s\n▫️ Target Audience: {len(ud['targets'])}\n▫️ Broadcast Status: {status_icon}\n\n<i>Select a module below to configure your campaign:</i>"
         try: await query.edit_message_caption(caption=text, reply_markup=get_dashboard_menu(user_id), parse_mode=ParseMode.HTML)
         except: await query.edit_message_text(text=text, reply_markup=get_dashboard_menu(user_id), parse_mode=ParseMode.HTML)
 
     elif query.data == "target_menu":
         if ud["mode"] == "GROUP":
-            text = "<b><tg-emoji emoji-id=\"5427009714297512782\">🎯</tg-emoji> AUDIENCE SELECTION</b>\nSelect your targeting method:"
+            text = "<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_4\">🎯</tg-emoji> AUDIENCE SELECTION</b>\nSelect your targeting method:"
             try: await query.edit_message_caption(caption=text, reply_markup=get_target_menu(), parse_mode=ParseMode.HTML)
             except: await query.edit_message_text(text=text, reply_markup=get_target_menu(), parse_mode=ParseMode.HTML)
         else:
@@ -265,7 +265,7 @@ async def navigate_menus(client, query):
             groups = groups[:80]
             group_cache[user_id] = groups
             user_states[user_id] = "waiting_for_group_selection"
-            text = f"<b><tg-emoji emoji-id=\"5427009714297512782\">🎯</tg-emoji> TARGET AUDIENCE</b>\nIdentified {len(groups)} reachable groups:\n\n"
+            text = f"<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_4\">🎯</tg-emoji> TARGET AUDIENCE</b>\nIdentified {len(groups)} reachable groups:\n\n"
             for i, g in enumerate(groups): text += f"{i+1}. <code>{g['title']}</code>\n"
             text += "\nInput indices separated by commas (e.g., <code>1, 3</code>) or type <code>all</code>. Type <code>cancel</code> to abort."
             await query.message.reply_text(text, parse_mode=ParseMode.HTML)
@@ -312,7 +312,7 @@ async def handle_actions(client, query):
         await navigate_menus(client, query)
 
     elif action == "analytics":
-        text = f"<b><tg-emoji emoji-id=\"5427009714297512783\">📊</tg-emoji> CAMPAIGN ANALYTICS</b>\n\n▪ Mode: {ud['mode']}\n▪ Packets Delivered: {ud['analytics']['sent']}\n▪ Packets Dropped: {ud['analytics']['failed']}\n▪ Target Audience: {len(ud['targets'])}\n▪ Active Accounts: {len(mem['clients'])}"
+        text = f"<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_5\">📊</tg-emoji> CAMPAIGN ANALYTICS</b>\n\n▪ Mode: {ud['mode']}\n▪ Packets Delivered: {ud['analytics']['sent']}\n▪ Packets Dropped: {ud['analytics']['failed']}\n▪ Target Audience: {len(ud['targets'])}\n▪ Active Accounts: {len(mem['clients'])}"
         await query.message.reply_text(text, parse_mode=ParseMode.HTML)
         await query.answer()
 
@@ -372,7 +372,7 @@ async def process_states(client, message):
         ud["ad_msg"] = {"type": media_type, "media_id": media_id, "text": raw_html}
         save_db()
         user_states[user_id] = None
-        return await message.reply_text("<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Ad Campaign Saved.</b> Formatting and Spintax preserved.\nSend /start to return.", parse_mode=ParseMode.HTML)
+        return await message.reply_text("<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Ad Campaign Saved.</b> Formatting and Spintax preserved.\nSend /start to return.", parse_mode=ParseMode.HTML)
 
     elif state == "waiting_for_smart_ar":
         try:
@@ -385,7 +385,7 @@ async def process_states(client, message):
             ud["smart_ar"] = ar_dict
             save_db()
             user_states[user_id] = None
-            await message.reply_text("<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Auto-Responder updated.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
+            await message.reply_text("<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Auto-Responder updated.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
         except: await message.reply_text("Invalid format. Use <code>key: value | key2: value2</code>", parse_mode=ParseMode.HTML)
 
     elif state == "waiting_for_smart_keywords":
@@ -400,7 +400,7 @@ async def process_states(client, message):
             ud["targets"] = matched
             save_db()
             user_states[user_id] = None
-            await message.reply_text(f"<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Smart Scan Complete</b>\nMapped {len(matched)} target groups to your audience.\nSend /start to return.", parse_mode=ParseMode.HTML)
+            await message.reply_text(f"<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Smart Scan Complete</b>\nMapped {len(matched)} target groups to your audience.\nSend /start to return.", parse_mode=ParseMode.HTML)
         except Exception as e: await message.reply_text(f"Scan error: {e}", parse_mode=ParseMode.HTML)
 
     elif state == "waiting_for_dm_group":
@@ -415,7 +415,7 @@ async def process_states(client, message):
             ud["targets"] = members
             save_db()
             user_states[user_id] = None
-            await message.reply_text(f"<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Scrape Complete</b>\nExtracted {len(members)} direct message targets.\nSend /start to return.", parse_mode=ParseMode.HTML)
+            await message.reply_text(f"<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Scrape Complete</b>\nExtracted {len(members)} direct message targets.\nSend /start to return.", parse_mode=ParseMode.HTML)
         except Exception as e: await message.reply_text(f"Scrape error (Ensure connected account is in the group): {e}", parse_mode=ParseMode.HTML)
 
     elif state == "waiting_for_group_selection":
@@ -432,7 +432,7 @@ async def process_states(client, message):
         save_db()
         user_states[user_id] = None
         group_cache.pop(user_id, None)
-        return await message.reply_text(f"<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Audience Saved:</b> {len(ud['targets'])} targets linked.\nSend /start to return.", parse_mode=ParseMode.HTML)
+        return await message.reply_text(f"<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Audience Saved:</b> {len(ud['targets'])} targets linked.\nSend /start to return.", parse_mode=ParseMode.HTML)
 
     elif state == "waiting_for_phone":
         temp_client = Client(f"temp_{user_id}_{len(ud['accounts'])}", api_id=API_ID, api_hash=API_HASH, in_memory=True)
@@ -456,7 +456,7 @@ async def process_states(client, message):
             bind_auto_reply(c, user_id)
             await c.start()
             mem["clients"].append(c)
-            await message.reply_text("<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Account Linked Successfully.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
+            await message.reply_text("<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Account Linked Successfully.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
             await auth_data["client"].disconnect()
             user_states[user_id] = None
         except SessionPasswordNeeded:
@@ -475,7 +475,7 @@ async def process_states(client, message):
             bind_auto_reply(c, user_id)
             await c.start()
             mem["clients"].append(c)
-            await message.reply_text("<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Account Linked Successfully.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
+            await message.reply_text("<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Account Linked Successfully.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
         except Exception as e: await message.reply_text(f"Auth error: {e}", parse_mode=ParseMode.HTML)
         finally:
             await auth_data["client"].disconnect()
@@ -486,7 +486,7 @@ async def process_states(client, message):
             ud["interval"] = int(text)
             save_db()
             user_states[user_id] = None
-            await message.reply_text("<b><tg-emoji emoji-id=\"5427009714297512784\">🟢</tg-emoji> Safety delay updated.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
+            await message.reply_text("<b><tg-emoji emoji-id=\"YOUR_EMOJI_ID_2\">🟢</tg-emoji> Safety delay updated.</b>\nSend /start to return.", parse_mode=ParseMode.HTML)
         else: await message.reply_text("Out of bounds parameter.", parse_mode=ParseMode.HTML)
 
 async def broadcast_loop(user_id):
