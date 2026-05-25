@@ -18,15 +18,15 @@ LOGGER_TOKEN = "8958059338:AAFN0VAggRO79Gk_en5JKdTr0AGGteVex5s"
 MASTER_ADMIN = 8759516193
 ADMIN_GROUP = -1003904012585
 
-# --- PREMIUM EMOJI TAGS ---
-E_STAR = '<tg-emoji emoji-id="5438496463044752972">⭐</tg-emoji>'
-E_TICK = '<tg-emoji emoji-id="5206607081334906820">✔️</tg-emoji>'
-E_WRONG = '<tg-emoji emoji-id="5210952531676504517">❌</tg-emoji>'
+# --- PREMIUM EMOJI TAGS (MAPPED FROM YOUR IDs) ---
+E_TG = '<tg-emoji emoji-id="6028346797368283073">✈️</tg-emoji>'
 E_ALERT = '<tg-emoji emoji-id="5420323339723881652">⚠️</tg-emoji>'
+E_BUBBLE = '<tg-emoji emoji-id="5443038326535759644">💬</tg-emoji>'
+E_WRONG = '<tg-emoji emoji-id="5210952531676504517">❌</tg-emoji>'
+E_TICK = '<tg-emoji emoji-id="5206607081334906820">✔️</tg-emoji>'
 E_DOLLAR = '<tg-emoji emoji-id="5409048419211682843">💲</tg-emoji>'
 E_LIVE = '<tg-emoji emoji-id="5264919878082509254">🔴</tg-emoji>'
-E_BUBBLE = '<tg-emoji emoji-id="5443038326535759644">💬</tg-emoji>'
-E_TG = '<tg-emoji emoji-id="6028346797368283073">✈️</tg-emoji>'
+E_STAR = '<tg-emoji emoji-id="5438496463044752972">⭐</tg-emoji>'
 E_MIC = '<tg-emoji emoji-id="5424818078833715060">📢</tg-emoji>'
 
 WALLETS = {
@@ -317,7 +317,7 @@ async def handle_actions(client, query):
 
     elif action == "edit_ar_msg":
         user_states[user_id] = "waiting_for_smart_ar"
-        text = f"{E_BUBBLE} <b>Module: Smart Auto-Responder</b>\nConfigure using format:\n<code>keyword: response | keyword: response | default: response</code>\n\n<i>Example:</i> <code>price: It costs $50 | default: I am away right now</code>\n\n(Spintax like <code>{Hi|Hey}</code> is supported!). Type <code>cancel</code> to abort."
+        text = f"{E_BUBBLE} <b>Module: Smart Auto-Responder</b>\nConfigure using format:\n<code>keyword: response | keyword: response | default: response</code>\n\n<i>Example:</i> <code>price: It costs $50 | default: I am away right now</code>\n\n(Spintax like <code>{{Hi|Hey}}</code> is supported!). Type <code>cancel</code> to abort."
         await query.message.reply_text(text, parse_mode=ParseMode.HTML)
 
     elif action == "add_acc":
@@ -327,7 +327,7 @@ async def handle_actions(client, query):
 
     elif action == "set_msg":
         user_states[user_id] = "waiting_for_ad_msg"
-        await query.message.reply_text(f"{E_STAR} <b>Module: Ad Campaign Setup</b>\nSubmit your advertisement (text/media). Spintax <code>{word1|word2}</code> is supported. Type <code>cancel</code> to abort.", parse_mode=ParseMode.HTML)
+        await query.message.reply_text(f"{E_STAR} <b>Module: Ad Campaign Setup</b>\nSubmit your advertisement (text/media). Spintax <code>{{word1|word2}}</code> is supported. Type <code>cancel</code> to abort.", parse_mode=ParseMode.HTML)
 
     elif action == "set_interval":
         user_states[user_id] = "waiting_for_interval"
