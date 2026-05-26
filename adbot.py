@@ -4,8 +4,9 @@ import re
 import time
 import json
 import os
+import pyrogram
 from aiohttp import web
-from pyrogram import Client, filters, idle
+from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
 from pyrogram.errors import SessionPasswordNeeded, FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -53,8 +54,9 @@ temp_auth = {}
 group_cache = {} 
 active_clients_memory = {} 
 
-app = Client("ad_bot_ui", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-logger_app = Client("logger_bot", api_id=API_ID, api_hash=API_HASH, bot_token=LOGGER_TOKEN)
+# FIX 1: in_memory=True added for Render file-system compatibility
+app = Client("ad_bot_ui", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, in_memory=True)
+logger_app = Client("logger_bot", api_id=API_ID, api_hash=API_HASH, bot_token=LOGGER_TOKEN, in_memory=True)
 
 def get_udata(uid):
     uid_str = str(uid)
@@ -558,40 +560,51 @@ async def broadcast_loop(user_id):
             save_db()
             await asyncio.sleep(ud["interval"])
 
-async def health_check(request):
-    return web.Response(text="Arcvium Network is ONLINE and Running!")
-
 async def start_webserver():
-    web_app = web.Application()
-    web_app.router.add_get('/', health_check)
-    runner = web.AppRunner(web_app)
+    app_web = web.Application()
+    app_web.router.add_get('/', lambda r: web.Response(text="Arcvium Network is ONLINE!"))
+    runner = web.AppRunner(app_web)
     await runner.setup()
     port = int(os.environ.get("PORT", 8080))
-    site = web.TCPSite(runner, '0.0.0.0', port)
-    await site.start()
-    print(f"Web Server started on port {port}")
+    await web.TCPSite(runner, '0.0.0.0', port).start()
+    print(f"Web server started on port {port}")
 
+# FIX 2 & 3: Better error handling and explicit start logic for Render
 async def main():
+    print("1. Starting Main Bot...")
     await app.start()
+    
+    print("2. Starting Logger Bot...")
     await logger_app.start()
-    await start_webserver()
+    
+    print("3. Starting Web Server...")
+    try:
+        await start_webserver()
+    except Exception as e:
+        print(f"⚠️ Web Server Warning: {e}")
+
+    print("4. Loading User Accounts...")
     for uid_str, data in user_data.items():
         uid = int(uid_str)
         if uid in subs_db and time.time() < subs_db[uid]:
             ud, mem = get_udata(uid)
             for session in data["accounts"]:
                 try:
-                    c = Client(f"u_{uid}_{random.randint(100,999)}", session_string=session)
+                    c = Client(f"u_{uid}_{random.randint(100,999)}", session_string=session, in_memory=True)
                     bind_auto_reply(c, uid)
                     await c.start()
                     try: 
                         async for _ in c.get_dialogs(limit=5): pass
                     except: pass
                     mem["clients"].append(c)
-                except Exception as e: pass
+                except Exception as e:
+                    print(f"Error loading session for {uid}: {e}")
+            
             if ud["status"] == "Running":
                 mem["task"] = asyncio.create_task(broadcast_loop(uid))
-    await idle()
+    
+    print("✅ BOT IS LIVE AND READY! SEND /start")
+    await pyrogram.idle()
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
